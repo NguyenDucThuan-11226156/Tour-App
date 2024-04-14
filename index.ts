@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import moment from "moment";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
+import path from "path";
 dotenv.config();
 import { systemConfig } from "./config/system";
 import adminRoutes from "./routes/admin/index.route";
@@ -14,7 +15,12 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 
 app.use(express.static("public"));
-
+// TinyMCE
+app.use(
+  "/tinymce",
+  express.static(path.join(__dirname, "node_modules", "tinymce"))
+);
+// End TinyMCE
 // App Local Variables
 app.locals.moment = moment;
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
