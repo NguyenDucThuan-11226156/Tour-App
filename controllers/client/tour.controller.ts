@@ -7,7 +7,8 @@ import { QueryTypes } from "sequelize";
 export const index = async (req: Request, res: Response) => {
   const slugCategory = req.params.slugCategory;
 
-  const tours = await sequelize.query(`
+  const tours = await sequelize.query(
+    `
     SELECT tours.*
     FROM tours
     JOIN tours_categories ON tours.id = tours_categories.tour_id
@@ -18,27 +19,29 @@ export const index = async (req: Request, res: Response) => {
       AND categories.status = 'active'
       AND tours.deleted = false
       AND tours.status = 'active';
-  `, {
-    type: QueryTypes.SELECT,
-    raw: true
-  });
+  `,
+    {
+      type: QueryTypes.SELECT,
+      raw: true,
+    }
+  );
 
   for (const tour of tours) {
-    if(tour["images"]) {
+    if (tour["images"]) {
       const images = JSON.parse(tour["images"]);
       tour["image"] = images[0];
     }
 
-    tour["price_special"] = tour["price"] * (1 - tour["discount"]/100);
+    tour["price_special"] = tour["price"] * (1 - tour["discount"] / 100);
   }
 
   console.log(tours);
 
   res.render("client/pages/tours/index", {
     pageTitle: "Danh sách tour",
-    tours: tours
+    tours: tours,
   });
-}
+};
 
 // [GET] /tours/detail/:slugTour
 export const detail = async (req: Request, res: Response) => {
@@ -48,21 +51,22 @@ export const detail = async (req: Request, res: Response) => {
     where: {
       slug: slugTour,
       deleted: false,
-      status: "active"
+      status: "active",
     },
-    raw: true
+    raw: true,
   });
 
-  if(tourDetail["images"]) {
+  if (tourDetail["images"]) {
     tourDetail["images"] = JSON.parse(tourDetail["images"]);
   }
 
-  tourDetail["price_special"] = tourDetail["price"] * (1 - tourDetail["discount"]/100);
+  tourDetail["price_special"] =
+    tourDetail["price"] * (1 - tourDetail["discount"] / 100);
 
   console.log(tourDetail);
-  
+
   res.render("client/pages/tours/detail", {
     pageTitle: "Chi tiết tour",
-    tourDetail: tourDetail
+    tourDetail: tourDetail,
   });
 };
